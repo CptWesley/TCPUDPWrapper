@@ -45,6 +45,7 @@
     <Compile Include="Client\Events\ClientConnectionEventArgs.cs" />
     <Compile Include="Client\Events\ClientMessageEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Server\ClientConnection.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Server\" />
