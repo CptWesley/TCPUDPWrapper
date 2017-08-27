@@ -65,5 +65,18 @@ namespace TCPUDPWrapper
 
             return parts.ToArray();
         }
+
+        // Returns the message as a string.
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            foreach (byte b in Bytes)
+            {
+                sb.Append((char) b);
+            }
+
+            return sb.ToString();
+        }
     }
 }
