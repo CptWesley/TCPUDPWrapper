@@ -2,7 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-using TCPUDPWrapper.events;
+using TCPUDPWrapper.Events;
 
 namespace TCPUDPWrapper
 {

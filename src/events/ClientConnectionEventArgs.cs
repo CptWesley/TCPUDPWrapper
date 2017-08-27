@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace TCPUDPWrapper.events
+namespace TCPUDPWrapper.Events
 {
     public class ClientConnectionEventArgs : EventArgs
     {
