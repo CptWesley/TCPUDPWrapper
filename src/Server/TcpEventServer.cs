@@ -31,6 +31,7 @@ namespace TCPUDPWrapper.Server
         // Constructor for a tcp event based server.
         public TcpEventServer()
         {
+            ReceiveBufferSize = 8192;
             Listening = false;
             _listenTask = new Task(AcceptClients);
             _clients = new List<ClientConnection>();
