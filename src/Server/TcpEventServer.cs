@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -98,63 +99,61 @@ namespace TCPUDPWrapper.Server
                 _clients.Add(clientConnection);
 
                 OnConnect(new ServerConnectionEventArgs(clientConnection));
-                new Task(() => ReadFromClient(clientConnection)).Start();
+                new Task(() => Read(clientConnection)).Start();
             }
         }
 
         // Read thread for listening to a specific client.
-        private void ReadFromClient(ClientConnection client)
+        private void Read(ClientConnection client)
         {
             while (Listening)
             {
-                byte[] message;
-                try
+                List<byte> msg = new List<byte>();
+                bool ended = false;
+                do
                 {
-                    message = Read(client.TcpClient);
-                }
-                catch (ClientDisconnectedException e)
-                {
-                    OnDisconnect(new ServerConnectionEventArgs(client));
-                    _clients.Remove(client);
-                    return;
-                }
+                    byte[] buffer = new byte[ReceiveBufferSize];
+                    int received;
+                    try
+                    {
+                        received = client.TcpClient.GetStream().Read(buffer, 0, buffer.Length);
+                        Console.WriteLine("size: " + received);
+                    }
+                    catch
+                    {
+                        Disconnect(client);
+                        return;
+                    }
 
-                if (message.Length == 0)
-                {
-                    OnDisconnect(new ServerConnectionEventArgs(client));
-                    _clients.Remove(client);
-                    return;
-                }
+                    if (received == 0)
+                    {
+                        Disconnect(client);
+                        return;
+                    }
 
-                OnReceive(new ServerMessageEventArgs(client, new Message(message)));
+                    for (int i = 0; i < received; ++i)
+                    {
+                        if (buffer[i] == Message.ETX)
+                        {
+                            ended = true;
+                            break;
+                        }
+                        msg.Add(buffer[i]);
+                    }
+
+                } while (!ended);
+
+                Console.WriteLine("size2: " + msg.Count);
+                OnReceive(new ServerMessageEventArgs(client, new Message(msg.ToArray())));
             }
         }
 
-        // Reads bytes from a TcpClient.
-        private byte[] Read(TcpClient client)
+        // Terminates a client connection.
+        public void Disconnect(ClientConnection client)
         {
-            if (!Listening)
-                return new byte[0];
-
-            byte[] buffer = new byte[ReceiveBufferSize];
-            try
-            {
-                client.GetStream().Read(buffer, 0, buffer.Length);
-            }
-            catch
-            {
-                throw new ClientDisconnectedException();
-            }
-
-            byte val = 255;
-            int index = 0;
-            while (val != 0)
-            {
-                val = buffer[index];
-                ++index;
-            }
-
-            return buffer.Take(index - 1).ToArray();
+            OnDisconnect(new ServerConnectionEventArgs(client));
+            _clients.Remove(client);
+            client.TcpClient.Close();
         }
 
         // Send data to a client.
@@ -163,9 +162,13 @@ namespace TCPUDPWrapper.Server
             if (!Listening)
                 return;
 
+            byte[] buffer = new byte[message.Bytes.Length + 1];
+            Array.Copy(message.Bytes, buffer, message.Bytes.Length);
+            buffer[buffer.Length - 1] = Message.ETX;
+
             try
             {
-                client.TcpClient.GetStream().WriteAsync(message.Bytes, 0, message.Bytes.Length);
+                client.TcpClient.GetStream().WriteAsync(buffer, 0, buffer.Length);
             }
             catch
             {

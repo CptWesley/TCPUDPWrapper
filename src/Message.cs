@@ -7,6 +7,7 @@ namespace TCPUDPWrapper
     {
         public const byte Null = 0;
         public const byte Filler = 255;
+        public const byte ETX = 3;
 
         public byte[] Bytes { get; }
 
@@ -19,7 +20,7 @@ namespace TCPUDPWrapper
         // Constructor of a message using a single string.
         public Message(string message)
         {
-            Bytes = new byte[message.Length + 2];
+            Bytes = new byte[message.Length];
             for (int i = 0; i < message.Length; ++i)
                 Bytes[i] = (byte)message[i];
         }
@@ -37,7 +38,6 @@ namespace TCPUDPWrapper
                 if (i != parts.Length-1)
                     bytes.Add(Filler);
             }
-
             Bytes = bytes.ToArray();
         }
 
@@ -50,7 +50,7 @@ namespace TCPUDPWrapper
             StringBuilder buffer = new StringBuilder();
             for (int i = 0; i < Bytes.Length; ++i)
             {
-                if (Bytes[i] != Filler)
+                if (Bytes[i] != Filler && Bytes[i] != Null)
                     buffer.Append((char)Bytes[i]);
                 else
                 {

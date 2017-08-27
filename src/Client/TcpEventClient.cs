@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -123,7 +125,7 @@ namespace TCPUDPWrapper.Client
         // Attempt to disconnect.
         public bool Disconnect()
         {
-            if (!IsConnected())
+            if (_client == null)
                 return false;
 
             OnDisconnect(new ClientConnectionEventArgs((IPEndPoint)_client.Client.RemoteEndPoint));
@@ -132,6 +134,7 @@ namespace TCPUDPWrapper.Client
             _client.Close();
             _client.Client.Dispose();
             _client.GetStream().Dispose();
+            _client = null;
             return true;
         }
 
@@ -140,31 +143,40 @@ namespace TCPUDPWrapper.Client
         {
             while (IsConnected())
             {
-                byte[] buffer = new byte[_receiveBufferSize];
-                try
+                List<byte> msg = new List<byte>();
+                bool ended = false;
+                do
                 {
-                    _client.GetStream().Read(buffer, 0, buffer.Length);
-                }
-                catch
-                {
-                    Disconnect();
-                }
+                    byte[] buffer = new byte[_receiveBufferSize];
+                    int received;
+                    try
+                    {
+                        received = _client.GetStream().Read(buffer, 0, buffer.Length);
+                    }
+                    catch
+                    {
+                        Disconnect();
+                        return;
+                    }
 
-                byte val = 255;
-                int index = 0;
-                while (val != 0)
-                {
-                    val = buffer[index];
-                    ++index;
-                }
+                    if (received == 0)
+                    {
+                        Disconnect();
+                        return;
+                    }
 
-                if (index - 1 > 0)
-                    OnReceive(new ClientMessageEventArgs(new Message(buffer.Take(index - 1).ToArray())));
-                else
-                {
-                    OnDisconnect(new ClientConnectionEventArgs((IPEndPoint)_client.Client.RemoteEndPoint));
-                    return;
-                }
+                    for (int i = 0; i < received; ++i)
+                    {
+                        if (buffer[i] == Message.ETX)
+                        {
+                            ended = true;
+                            break;
+                        }
+                        msg.Add(buffer[i]);
+                    }
+
+                } while (!ended);
+                OnReceive(new ClientMessageEventArgs(new Message(msg.ToArray())));
             }
         }
 
@@ -174,9 +186,13 @@ namespace TCPUDPWrapper.Client
             if (!IsConnected())
                 return;
 
+            byte[] buffer = new byte[message.Bytes.Length+1];
+            Array.Copy(message.Bytes, buffer, message.Bytes.Length);
+            buffer[buffer.Length - 1] = Message.ETX;
+
             try
             {
-                _client.GetStream().WriteAsync(message.Bytes, 0, message.Bytes.Length);
+                _client.GetStream().WriteAsync(buffer, 0, buffer.Length);
             }
             catch
             {
