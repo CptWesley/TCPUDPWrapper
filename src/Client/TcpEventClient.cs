@@ -14,7 +14,20 @@ namespace TCPUDPWrapper.Client
     public class TcpEventClient
     {
         public int Timeout { get; set; }
-        public int BufferSize { get; set; }
+        public int ReceiveBufferSize
+        {
+            get => _receiveBufferSize;
+            set => SetReceiveBufferSize(value);
+        }
+
+        public int SendBufferSize
+        {
+            get => _sendBufferSize;
+            set => SetSendBufferSize(value);
+        }
+
+        private int _receiveBufferSize;
+        private int _sendBufferSize;
 
         private TcpClient _client;
         private readonly Task _readTask;
@@ -26,9 +39,9 @@ namespace TCPUDPWrapper.Client
         // Constructor for an event based tcp client.
         public TcpEventClient()
         {
-
+            _receiveBufferSize = 8192;
+            _sendBufferSize = 8192;
             Timeout = 3;
-            BufferSize = 1024;
             _readTask = new Task(Read);
         }
 
@@ -50,6 +63,22 @@ namespace TCPUDPWrapper.Client
             Disconnected?.Invoke(this, e);
         }
 
+        // Sets the buffer size for receiving messages.
+        public void SetReceiveBufferSize(int size)
+        {
+            _receiveBufferSize = size;
+            if (_client != null)
+                _client.ReceiveBufferSize = size;
+        }
+
+        // Sets the buffer size for sending messages.
+        public void SetSendBufferSize(int size)
+        {
+            _sendBufferSize = size;
+            if (_client != null)
+                _client.SendBufferSize = size;
+        }
+
         // Checks whether the client is connected.
         public bool IsConnected()
         {
@@ -65,6 +94,8 @@ namespace TCPUDPWrapper.Client
                 return false;
 
             _client = new TcpClient();
+            _client.SendBufferSize = _sendBufferSize;
+            _client.ReceiveBufferSize = _receiveBufferSize;
 
             int actualTimeout = Timeout * 1000;
             if (actualTimeout < 0)
@@ -109,7 +140,7 @@ namespace TCPUDPWrapper.Client
         {
             while (IsConnected())
             {
-                byte[] buffer = new byte[BufferSize];
+                byte[] buffer = new byte[_receiveBufferSize];
                 try
                 {
                     _client.GetStream().Read(buffer, 0, buffer.Length);

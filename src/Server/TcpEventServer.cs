@@ -15,7 +15,7 @@ namespace TCPUDPWrapper.Server
     public class TcpEventServer
     {
         public int Port { get; set; }
-        public int BufferSize { get; set; }
+        public int ReceiveBufferSize { get; set; }
         public bool Listening { get; private set; }
 
         private TcpListener _server;
@@ -135,7 +135,7 @@ namespace TCPUDPWrapper.Server
             if (!Listening)
                 return new byte[0];
 
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[ReceiveBufferSize];
             try
             {
                 client.GetStream().Read(buffer, 0, buffer.Length);
