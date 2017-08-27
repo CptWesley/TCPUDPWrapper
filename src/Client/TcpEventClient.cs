@@ -158,7 +158,13 @@ namespace TCPUDPWrapper.Client
                     ++index;
                 }
 
-                OnReceive(new ClientMessageEventArgs(new Message(buffer.Take(index - 1).ToArray())));
+                if (index - 1 > 0)
+                    OnReceive(new ClientMessageEventArgs(new Message(buffer.Take(index - 1).ToArray())));
+                else
+                {
+                    OnDisconnect(new ClientConnectionEventArgs((IPEndPoint)_client.Client.RemoteEndPoint));
+                    return;
+                }
             }
         }
 
