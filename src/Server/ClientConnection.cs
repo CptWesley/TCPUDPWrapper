@@ -8,7 +8,7 @@ namespace TCPUDPWrapper.Server
     {
         public int Id { get; }
         public TcpClient TcpClient { get; }
-        public IPAddress Ip => ((IPEndPoint)TcpClient.Client.RemoteEndPoint).Address;
+        public IPEndPoint EndPoint => ((IPEndPoint)TcpClient.Client.RemoteEndPoint);
         public long Joined { get; }
 
         // Constructor for client connection info.
