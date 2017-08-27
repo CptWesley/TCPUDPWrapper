@@ -79,8 +79,8 @@ namespace TCPUDPWrapper.Server
             }
 
             _clients = new List<ClientConnection>();
-
             _listenTask.Start();
+            Listening = true;
 
             return true;
         }
