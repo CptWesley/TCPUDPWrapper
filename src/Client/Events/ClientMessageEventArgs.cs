@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TCPUDPWrapper.Events
+namespace TCPUDPWrapper.Client.Events
 {
     public class ClientMessageEventArgs : EventArgs
     {
