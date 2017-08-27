@@ -155,5 +155,21 @@ namespace TCPUDPWrapper.Server
 
             return buffer.Take(index - 1).ToArray();
         }
+
+        // Send data to a client.
+        public void Send(ClientConnection client, Message message)
+        {
+            if (!Listening)
+                return;
+
+            try
+            {
+                client.TcpClient.GetStream().WriteAsync(message.Bytes, 0, message.Bytes.Length);
+            }
+            catch
+            {
+                // Do nothing (for now).
+            }
+        }
     }
 }

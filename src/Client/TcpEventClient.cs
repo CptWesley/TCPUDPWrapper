@@ -130,5 +130,21 @@ namespace TCPUDPWrapper.Client
                 OnReceive(new ClientMessageEventArgs(new Message(buffer.Take(index - 1).ToArray())));
             }
         }
+
+        // Send data to the server.
+        public void Send(Message message)
+        {
+            if (!IsConnected())
+                return;
+
+            try
+            {
+                _client.GetStream().WriteAsync(message.Bytes, 0, message.Bytes.Length);
+            }
+            catch
+            {
+                // Do nothing (for now).
+            }
+        }
     }
 }
