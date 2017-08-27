@@ -117,7 +117,6 @@ namespace TCPUDPWrapper.Server
                     try
                     {
                         received = client.TcpClient.GetStream().Read(buffer, 0, buffer.Length);
-                        Console.WriteLine("size: " + received);
                     }
                     catch
                     {
@@ -143,7 +142,6 @@ namespace TCPUDPWrapper.Server
 
                 } while (!ended);
 
-                Console.WriteLine("size2: " + msg.Count);
                 OnReceive(new ServerMessageEventArgs(client, new Message(msg.ToArray())));
             }
         }
