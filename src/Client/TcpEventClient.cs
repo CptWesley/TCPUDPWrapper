@@ -14,12 +14,12 @@ namespace TCPUDPWrapper.Client
     public class TcpEventClient
     {
         public int Timeout { get; set; }
+
         public int ReceiveBufferSize
         {
             get => _receiveBufferSize;
             set => SetReceiveBufferSize(value);
         }
-
         public int SendBufferSize
         {
             get => _sendBufferSize;
