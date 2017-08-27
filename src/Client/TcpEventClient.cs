@@ -81,7 +81,7 @@ namespace TCPUDPWrapper.Client
 
             if (_client.Connected)
             {
-                OnConnect(new ClientConnectionEventArgs(this, (IPEndPoint)_client.Client.RemoteEndPoint));
+                OnConnect(new ClientConnectionEventArgs((IPEndPoint)_client.Client.RemoteEndPoint));
                 //Read();
                 _readTask.Start();
             }
@@ -95,7 +95,7 @@ namespace TCPUDPWrapper.Client
             if (!IsConnected())
                 return false;
 
-            OnDisconnect(new ClientConnectionEventArgs(this, (IPEndPoint)_client.Client.RemoteEndPoint));
+            OnDisconnect(new ClientConnectionEventArgs((IPEndPoint)_client.Client.RemoteEndPoint));
 
             _client.GetStream().Close();
             _client.Close();
@@ -127,7 +127,7 @@ namespace TCPUDPWrapper.Client
                     ++index;
                 }
 
-                OnReceive(new ClientMessageEventArgs(this, new Message(buffer.Take(index - 1).ToArray())));
+                OnReceive(new ClientMessageEventArgs(new Message(buffer.Take(index - 1).ToArray())));
             }
         }
     }
