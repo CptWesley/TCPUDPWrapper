@@ -4,7 +4,7 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using TCPUDPWrapper.Events;
 
-namespace TCPUDPWrapper
+namespace TCPUDPWrapper.Client
 {
     public delegate void ClientConnectedEventHandler(object sender, ClientConnectionEventArgs e);
     public delegate void ClientDisconnectedEventHandler(object sender, ClientConnectionEventArgs e);

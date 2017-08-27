@@ -41,13 +41,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Message.cs" />
-    <Compile Include="TcpEventClient.cs" />
+    <Compile Include="Client\TcpEventClient.cs" />
     <Compile Include="Events\ClientConnectionEventArgs.cs" />
     <Compile Include="Events\ClientMessageEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Client\" />
     <Folder Include="Server\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
