@@ -13,11 +13,6 @@ namespace TCPUDPWrapper.Client
     public class TcpEventClient : EventClient
     {
         /// <summary>
-        /// Time to allow connection attempts to servers (in seconds).
-        /// </summary>
-        public int Timeout { get; set; }
-
-        /// <summary>
         /// Buffer size of received messages.
         /// </summary>
         public int ReceiveBufferSize
@@ -47,7 +42,6 @@ namespace TCPUDPWrapper.Client
         {
             _receiveBufferSize = 8192;
             _sendBufferSize = 8192;
-            Timeout = 3;
         }
 
         /// <summary>

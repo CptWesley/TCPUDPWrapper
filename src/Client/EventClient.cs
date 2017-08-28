@@ -28,6 +28,11 @@ namespace TCPUDPWrapper.Client
     public abstract class EventClient
     {
         /// <summary>
+        /// Time to allow connection attempts to servers (in seconds).
+        /// </summary>
+        public int Timeout { get; set; }
+
+        /// <summary>
         /// Event that is fired when a client receives a message from the server.
         /// </summary>
         public event ClientReceivedEventHandler Received;
@@ -39,6 +44,14 @@ namespace TCPUDPWrapper.Client
         /// Event that is fired when a client disconnects from a server.
         /// </summary>
         public event ClientDisconnectedEventHandler Disconnected;
+
+        /// <summary>
+        /// Constructor for an event based client.
+        /// </summary>
+        protected EventClient()
+        {
+            Timeout = 3;
+        }
 
         /// <summary>
         /// Checks whether the client is connected.
