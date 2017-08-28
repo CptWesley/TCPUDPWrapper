@@ -31,7 +31,7 @@ namespace TCPUDPWrapper.Client
         private int _sendBufferSize;
 
         private TcpClient _client;
-        private readonly Task _readTask;
+        private Task _readTask;
 
         public event ClientReceivedEventHandler Received;
         public event ClientConnectedEventHandler Connected;
@@ -43,7 +43,6 @@ namespace TCPUDPWrapper.Client
             _receiveBufferSize = 8192;
             _sendBufferSize = 8192;
             Timeout = 3;
-            _readTask = new Task(Read);
         }
 
         // Used when the client receives a message.
@@ -114,7 +113,7 @@ namespace TCPUDPWrapper.Client
             if (_client.Connected)
             {
                 OnConnect(new ClientConnectionEventArgs((IPEndPoint)_client.Client.RemoteEndPoint));
-                //Read();
+                _readTask = new Task(Read);
                 _readTask.Start();
             }
 
