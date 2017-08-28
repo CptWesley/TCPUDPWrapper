@@ -41,6 +41,31 @@ namespace TCPUDPWrapper.Client
         public event ClientDisconnectedEventHandler Disconnected;
 
         /// <summary>
+        /// Checks whether the client is connected.
+        /// </summary>
+        /// <returns>True if connected, false if not connected.</returns>
+        public abstract bool IsConnected();
+
+        /// <summary>
+        /// Attempts to connect to an IPEndPoint. Returns true if succesful. Returns false otherwise.
+        /// </summary>
+        /// <param name="ep">End point to connect to.</param>
+        /// <returns>Return true if connection was succesful, returns false otherwise.</returns>
+        public abstract bool Connect(IPEndPoint ep);
+
+        /// <summary>
+        /// Attempt to disconnect.
+        /// </summary>
+        /// <returns>Returns true if disconnected succesful, returns false otherwise.</returns>
+        public abstract bool Disconnect();
+
+        /// <summary>
+        /// Send data to the server.
+        /// </summary>
+        /// <param name="message">Message to send to the server.</param>
+        public abstract void Send(Message message);
+
+        /// <summary>
         /// Used when the client receives a message.
         /// </summary>
         /// <param name="e">Event arguments containing the message that was received.</param>
@@ -66,30 +91,5 @@ namespace TCPUDPWrapper.Client
         {
             Disconnected?.Invoke(this, e);
         }
-
-        /// <summary>
-        /// Checks whether the client is connected.
-        /// </summary>
-        /// <returns>True if connected, false if not connected.</returns>
-        public abstract bool IsConnected();
-
-        /// <summary>
-        /// Attempts to connect to an IPEndPoint. Returns true if succesful. Returns false otherwise.
-        /// </summary>
-        /// <param name="ep">End point to connect to.</param>
-        /// <returns>Return true if connection was succesful, returns false otherwise.</returns>
-        public abstract bool Connect(IPEndPoint ep);
-
-        /// <summary>
-        /// Attempt to disconnect.
-        /// </summary>
-        /// <returns>Returns true if disconnected succesful, returns false otherwise.</returns>
-        public abstract bool Disconnect();
-
-        /// <summary>
-        /// Send data to the server.
-        /// </summary>
-        /// <param name="message">Message to send to the server.</param>
-        public abstract void Send(Message message);
     }
 }
