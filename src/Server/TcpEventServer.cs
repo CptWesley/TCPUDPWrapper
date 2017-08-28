@@ -16,7 +16,16 @@ namespace TCPUDPWrapper.Server
     public class TcpEventServer
     {
         public int Port { get; set; }
-        public int ReceiveBufferSize { get; set; }
+        public int ReceiveBufferSize
+        {
+            get => _receiveBufferSize;
+            set => SetReceiveBufferSize(value);
+        }
+        public int SendBufferSize
+        {
+            get => _sendBufferSize;
+            set => SetSendBufferSize(value);
+        }
         public bool Listening { get; private set; }
 
         private TcpListener _server;
@@ -25,6 +34,9 @@ namespace TCPUDPWrapper.Server
         private List<ClientConnection> _clients;
         private int _nextId = 0;
 
+        private int _receiveBufferSize;
+        private int _sendBufferSize;
+
         public event ReceivedEventHandler Received;
         public event ConnectedEventHandler Connected;
         public event DisconnectedEventHandler Disconnected;
@@ -32,7 +44,8 @@ namespace TCPUDPWrapper.Server
         // Constructor for a tcp event based server.
         public TcpEventServer()
         {
-            ReceiveBufferSize = 8192;
+            _receiveBufferSize = 8192;
+            _sendBufferSize = 8192;
             Listening = false;
             _listenTask = new Task(AcceptClients);
             _clients = new List<ClientConnection>();
@@ -55,6 +68,26 @@ namespace TCPUDPWrapper.Server
         protected virtual void OnDisconnect(ServerConnectionEventArgs e)
         {
             Disconnected?.Invoke(this, e);
+        }
+
+        // Sets the buffer size for receiving messages.
+        public void SetReceiveBufferSize(int size)
+        {
+            _receiveBufferSize = size;
+            foreach (ClientConnection client in _clients)
+            {
+                client.TcpClient.ReceiveBufferSize = size;
+            }
+        }
+
+        // Sets the buffer size for sending messages.
+        public void SetSendBufferSize(int size)
+        {
+            _sendBufferSize = size;
+            foreach (ClientConnection client in _clients)
+            {
+                client.TcpClient.SendBufferSize = size;
+            }
         }
 
         // Returns a list of all clients.
