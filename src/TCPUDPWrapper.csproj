@@ -41,7 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Client\Events\ClientEventHandler.cs" />
+    <Compile Include="Client\Events\ClientEventListener.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Client\TcpEventClient.cs" />
     <Compile Include="Client\Events\ClientConnectionEventArgs.cs" />
@@ -49,7 +49,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\ClientConnection.cs" />
     <Compile Include="Server\Events\ServerConnectionEventArgs.cs" />
-    <Compile Include="Server\Events\ServerEventHandler.cs" />
+    <Compile Include="Server\Events\ServerEventListener.cs" />
     <Compile Include="Server\Events\ServerMessageEventArgs.cs" />
     <Compile Include="Server\TcpEventServer.cs" />
     <Compile Include="IEventListener.cs" />
