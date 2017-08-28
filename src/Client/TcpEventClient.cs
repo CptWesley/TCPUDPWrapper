@@ -107,7 +107,7 @@ namespace TCPUDPWrapper.Client
             {
                 _client.ConnectAsync(ep.Address, ep.Port).Wait(actualTimeout);
             }
-            catch (SocketException e)
+            catch
             {
                 return false;
             }
