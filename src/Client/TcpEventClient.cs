@@ -7,20 +7,46 @@ using TCPUDPWrapper.Client.Events;
 
 namespace TCPUDPWrapper.Client
 {
+    /// <summary>
+    /// EventHandler for an event that is fired when a client connects to a server.
+    /// </summary>
+    /// <param name="sender">Sender of the event.</param>
+    /// <param name="e">Event arguments.</param>
     public delegate void ClientConnectedEventHandler(object sender, ClientConnectionEventArgs e);
+    /// <summary>
+    /// EventHandler for an event that is fired when a client disconnects from a server.
+    /// </summary>
+    /// <param name="sender">Sender of the event.</param>
+    /// <param name="e">Event arguments.</param>
     public delegate void ClientDisconnectedEventHandler(object sender, ClientConnectionEventArgs e);
-
+    /// <summary>
+    /// EventHandler for an event that is fired when a client receives a message from the server.
+    /// </summary>
+    /// <param name="sender">Sender of the event.</param>
+    /// <param name="e">Event arguments.</param>
     public delegate void ClientReceivedEventHandler(object sender, ClientMessageEventArgs e);
 
+    /// <summary>
+    /// Tcp event based asynchronous client.
+    /// </summary>
     public class TcpEventClient
     {
+        /// <summary>
+        /// Time to allow connection attempts to servers (in seconds).
+        /// </summary>
         public int Timeout { get; set; }
 
+        /// <summary>
+        /// Buffer size of received messages.
+        /// </summary>
         public int ReceiveBufferSize
         {
             get => _receiveBufferSize;
             set => SetReceiveBufferSize(value);
         }
+        /// <summary>
+        /// Buffer size of outgoing messages.
+        /// </summary>
         public int SendBufferSize
         {
             get => _sendBufferSize;
@@ -33,11 +59,22 @@ namespace TCPUDPWrapper.Client
         private TcpClient _client;
         private Task _readTask;
 
+        /// <summary>
+        /// Event that is fired when a client receives a message from the server.
+        /// </summary>
         public event ClientReceivedEventHandler Received;
+        /// <summary>
+        /// Event that is fired when a client connects to a server.
+        /// </summary>
         public event ClientConnectedEventHandler Connected;
+        /// <summary>
+        /// Event that is fired when a client disconnects from a server.
+        /// </summary>
         public event ClientDisconnectedEventHandler Disconnected;
 
-        // Constructor for an event based tcp client.
+        /// <summary>
+        /// Constructor for an event based tcp client.
+        /// </summary>
         public TcpEventClient()
         {
             _receiveBufferSize = 8192;
@@ -45,25 +82,37 @@ namespace TCPUDPWrapper.Client
             Timeout = 3;
         }
 
-        // Used when the client receives a message.
+        /// <summary>
+        /// Used when the client receives a message.
+        /// </summary>
+        /// <param name="e">Event arguments containing the message that was received.</param>
         protected virtual void OnReceive(ClientMessageEventArgs e)
         {
             Received?.Invoke(this, e);
         }
 
-        // Used when the client connects to a server.
+        /// <summary>
+        /// Used when the client connects to a server.
+        /// </summary>
+        /// <param name="e">Event arguments containing the server info that was connected to.</param>
         protected virtual void OnConnect(ClientConnectionEventArgs e)
         {
             Connected?.Invoke(this, e);
         }
 
-        // Used when the client disconnects from a server.
+        /// <summary>
+        /// Used when the client disconnects from a server.
+        /// </summary>
+        /// <param name="e">Event arguments containing the server info that we disconnected from.</param>
         protected virtual void OnDisconnect(ClientConnectionEventArgs e)
         {
             Disconnected?.Invoke(this, e);
         }
 
-        // Sets the buffer size for receiving messages.
+        /// <summary>
+        /// Sets the buffer size for receiving messages.
+        /// </summary>
+        /// <param name="size">New buffer size.</param>
         public void SetReceiveBufferSize(int size)
         {
             _receiveBufferSize = size;
@@ -71,7 +120,10 @@ namespace TCPUDPWrapper.Client
                 _client.ReceiveBufferSize = size;
         }
 
-        // Sets the buffer size for sending messages.
+        /// <summary>
+        /// Sets the buffer size for sending messages.
+        /// </summary>
+        /// <param name="size">New buffer size.</param>
         public void SetSendBufferSize(int size)
         {
             _sendBufferSize = size;
@@ -79,7 +131,10 @@ namespace TCPUDPWrapper.Client
                 _client.SendBufferSize = size;
         }
 
-        // Checks whether the client is connected.
+        /// <summary>
+        /// Checks whether the client is connected.
+        /// </summary>
+        /// <returns>True if connected, false if not connected.</returns>
         public bool IsConnected()
         {
             if (_client == null)
@@ -87,7 +142,11 @@ namespace TCPUDPWrapper.Client
             return _client.Connected;
         }
 
-        // Attempts to connect to an IPEndPoint. Returns true if succesful. Returns false otherwise.
+        /// <summary>
+        /// Attempts to connect to an IPEndPoint. Returns true if succesful. Returns false otherwise.
+        /// </summary>
+        /// <param name="ep">End point to connect to.</param>
+        /// <returns>Return true if connection was succesful, returns false otherwise.</returns>
         public bool Connect(IPEndPoint ep)
         {
             if (IsConnected())
@@ -120,7 +179,10 @@ namespace TCPUDPWrapper.Client
             return _client.Connected;
         }
 
-        // Attempt to disconnect.
+        /// <summary>
+        /// Attempt to disconnect.
+        /// </summary>
+        /// <returns>Returns true if disconnected succesful, returns false otherwise.</returns>
         public bool Disconnect()
         {
             if (_client == null)
@@ -133,7 +195,9 @@ namespace TCPUDPWrapper.Client
             return true;
         }
 
-        // Asynchronously read from the server.
+        /// <summary>
+        /// Asynchronously read from the server.
+        /// </summary>
         private void Read()
         {
             while (IsConnected())
@@ -175,7 +239,10 @@ namespace TCPUDPWrapper.Client
             }
         }
 
-        // Send data to the server.
+        /// <summary>
+        /// Send data to the server.
+        /// </summary>
+        /// <param name="message">Message to send to the server.</param>
         public void Send(Message message)
         {
             if (!IsConnected())

@@ -3,21 +3,42 @@ using System.Text;
 
 namespace TCPUDPWrapper
 {
+    /// <summary>
+    /// Class containing a message that was received or needs to be send between tcp/udp servers/clients.
+    /// </summary>
     public class Message
     {
+        /// <summary>
+        /// Byte representing null.
+        /// </summary>
         public const byte Null = 0;
-        public const byte Filler = 255;
+        /// <summary>
+        /// Byte representing a seperation of parts.
+        /// </summary>
+        public const byte Seperator = 255;
+        /// <summary>
+        /// Byte representing an end-of-line character.
+        /// </summary>
         public const byte ETX = 3;
 
+        /// <summary>
+        /// Bytes representing a message.
+        /// </summary>
         public byte[] Bytes { get; }
 
-        // Constructor of a message.
+        /// <summary>
+        /// Constructor of a message using a byte array.
+        /// </summary>
+        /// <param name="bytes">Bytes representing a message.</param>
         public Message(byte[] bytes)
         {
             Bytes = bytes;
         }
 
-        // Constructor of a message using a single string.
+        /// <summary>
+        /// Constructor of a message using a single string.
+        /// </summary>
+        /// <param name="message">String representing a message.</param>
         public Message(string message)
         {
             Bytes = new byte[message.Length];
@@ -25,7 +46,10 @@ namespace TCPUDPWrapper
                 Bytes[i] = (byte)message[i];
         }
 
-        // Constructor of a message using an array of strings.
+        /// <summary>
+        /// Constructor of a message using an array of strings.
+        /// </summary>
+        /// <param name="parts">Array of strings to be send. Each string will be send, seperated with a Filler character (255).</param>
         public Message(string[] parts)
         {
             List<byte> bytes = new List<byte>(3);
@@ -36,12 +60,15 @@ namespace TCPUDPWrapper
                     bytes.Add((byte)c);
                 }
                 if (i != parts.Length-1)
-                    bytes.Add(Filler);
+                    bytes.Add(Seperator);
             }
             Bytes = bytes.ToArray();
         }
 
-        // Get all parts of the message.
+        /// <summary>
+        /// Get all parts of the message.
+        /// </summary>
+        /// <returns>An array containing all parts of a message.</returns>
         public string[] GetParts()
         {
             List<string> parts = new List<string>();
@@ -50,7 +77,7 @@ namespace TCPUDPWrapper
             StringBuilder buffer = new StringBuilder();
             for (int i = 0; i < Bytes.Length; ++i)
             {
-                if (Bytes[i] != Filler && Bytes[i] != Null)
+                if (Bytes[i] != Seperator && Bytes[i] != Null)
                     buffer.Append((char)Bytes[i]);
                 else
                 {
@@ -66,7 +93,10 @@ namespace TCPUDPWrapper
             return parts.ToArray();
         }
 
-        // Returns the message as a string.
+        /// <summary>
+        /// Returns the message as a string.
+        /// </summary>
+        /// <returns>A stringified version of the bytes contained in this message.</returns>
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
