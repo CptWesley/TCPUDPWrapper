@@ -130,10 +130,7 @@ namespace TCPUDPWrapper.Client
 
             OnDisconnect(new ClientConnectionEventArgs((IPEndPoint)_client.Client.RemoteEndPoint));
 
-            _client.GetStream().Close();
             _client.Close();
-            _client.Client.Dispose();
-            _client.GetStream().Dispose();
             _client = null;
             return true;
         }
