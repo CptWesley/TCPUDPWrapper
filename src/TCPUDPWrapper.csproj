@@ -50,7 +50,6 @@
     <Compile Include="Server\Events\ServerConnectionEventArgs.cs" />
     <Compile Include="Server\Events\ServerEventHandler.cs" />
     <Compile Include="Server\Events\ServerMessageEventArgs.cs" />
-    <Compile Include="Server\Exceptions\ClientDisconnectedException.cs" />
     <Compile Include="Server\TcpEventServer.cs" />
     <Compile Include="IEventHandler.cs" />
   </ItemGroup>
