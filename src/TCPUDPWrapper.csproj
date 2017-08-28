@@ -52,7 +52,7 @@
     <Compile Include="Server\Events\ServerEventHandler.cs" />
     <Compile Include="Server\Events\ServerMessageEventArgs.cs" />
     <Compile Include="Server\TcpEventServer.cs" />
-    <Compile Include="IEventHandler.cs" />
+    <Compile Include="IEventListener.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

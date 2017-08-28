@@ -3,7 +3,7 @@
     /// <summary>
     /// Abstract class that forms the base for client event listeners.
     /// </summary>
-    public abstract class ClientEventHandler : IEventHandler
+    public abstract class ClientEventHandler : IEventListener
     {
         private TcpEventClient _client;
 

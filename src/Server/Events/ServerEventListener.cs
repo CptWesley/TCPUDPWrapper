@@ -3,7 +3,7 @@
     /// <summary>
     /// Abstract class that forms a base for server event listeners.
     /// </summary>
-    public abstract class ServerEventHandler : IEventHandler
+    public abstract class ServerEventHandler : IEventListener
     {
         private TcpEventServer _server;
 
